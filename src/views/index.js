@@ -1,0 +1,9 @@
+export {default as TourDetail} from './User/DetailTour/DetailTour';
+export {default as Home} from './User/Home/Home';
+export {default as Test} from './Test/test';
+export {default as Payment} from './User/Payment/Payment';
+export {default as Profile} from './User/Profile/Profile';
+export {default as PaymentPen} from './User/PaymentPending/PaymentPen';
+export {default as HomeAdmin} from './Admin/HomeAdmin';
+export {default as IncomeTrip} from './Admin/IncomeTrip';
+export {default as AddTrip} from './Admin/AddTrip';

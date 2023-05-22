@@ -1,0 +1,11 @@
+export { default as Tassie } from "./fun-tassie.png";
+export { default as Summer } from "./ex-summer.png";
+export { default as Autumn } from "./wo-autm.png";
+export { default as Overland } from "./ovr-jkt.png";
+export { default as Bajo } from "./lb-jo.png";
+export { default as Tokyo } from "./ma-tok.png";
+export { default as Bukti } from "./bukti.png";
+export { default as DummyImg } from "./dumb-img.jpg";
+export { default as Caro1 } from "./caro1.png";
+export { default as Caro2 } from "./caro2.png";
+export { default as Caro3 } from "./caro3.png";

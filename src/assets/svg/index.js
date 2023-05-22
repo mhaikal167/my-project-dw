@@ -1,0 +1,5 @@
+export {default as Hotel} from './hotel 1.svg'
+export {default as Calender} from './calendar 1.svg'
+export {default as Meal} from './meal 1.svg'
+export {default as Plane} from './plane 1.svg'
+export {default as Time} from './time 1.svg' 
