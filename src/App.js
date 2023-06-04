@@ -9,65 +9,44 @@ import {
   Navigate,
   Outlet,
 } from "react-router-dom";
+import { routeAdmin } from "./utils/routes/routes";
+import {
+  PrivateRouteAdmin,
+  PrivateRouteUser,
+  PublicRoute,
+} from "./utils/routes/PrivateRoutes";
 
-function PrivateRoute({ user, admin, children }) {
-  if (!user || admin) {
-    return <Navigate to="/" replace />;
-  }
-  return children;
-}
-function PublicRoute({ children }) {
-  return children;
-}
-
-function ProtectRoute({ user }) {
-  if (!user) {
-    return <Navigate to="/" replace />;
-  }
-  return <Outlet />;
-}
+import { checkAuthInitiate } from "./utils/redux/actions/authAction";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 function App() {
-  const data = JSON.parse(localStorage.getItem("dataLogin"));
+  const auth = useSelector((state) => state.auth);
+  const d = useDispatch();
+
+  useEffect(() => {
+    d(checkAuthInitiate(auth.token));
+  }, [d, auth?.token]);
   return (
     <>
       <BrowserRouter>
         <COMPONENT.Navbar wall={Wallpaper2} />
         <Routes>
-          {/* <Route
-            path="/detail-tour/:id"
-            element={
-              !data?.isUser && !data?.isAdmin ? 
-              <PublicRoute>
-                 <ELEMENT.TourDetail />
-              </PublicRoute>
-              :
-              <PrivateRoute user={data?.isUser} admin={data?.isAdmin}>
-                <ELEMENT.TourDetail />
-              </PrivateRoute>
-            }
-          /> */}
-          <Route element={<ProtectRoute user={data?.isAdmin} />}>
-            <Route path="/trip" element={<ELEMENT.IncomeTrip />} />
-            <Route path="/admin" element={<ELEMENT.HomeAdmin />} />
-            <Route path="/add-trip" element={<ELEMENT.AddTrip />} />
+        <Route element={<PublicRoute auth={auth}/>}>
+            <Route path="/" element={<ELEMENT.Home />} />
+            <Route path="/detail-tour/:id" element={<ELEMENT.TourDetail />} />
           </Route>
-
-          <Route element={<ProtectRoute user={data?.isUser} />}>
-            <Route
-              path="/payment"
-              element={<ELEMENT.Payment />}
-            />
-            <Route
-              path="/payment-pending"
-              element={<ELEMENT.PaymentPen />}
-            />
-            <Route
-              path="/profile"
-              element={<ELEMENT.Profile />}
-            />
+          <Route element={<PrivateRouteAdmin auth={auth}/>}>
+              {routeAdmin.map((routes,idx) => {
+                return <Route key={idx} path={routes.path} element={routes.element} />;
+              })}
             </Route>
-          <Route
+          <Route element={<PrivateRouteUser auth={auth}/>}>
+            <Route path="/payment" element={<ELEMENT.Payment />} />
+            <Route path="/payment-pending" element={<ELEMENT.PaymentPen />} />
+            <Route path="/profile" element={<ELEMENT.Profile />} />
+          </Route>
+          {/* <Route
             path="/detail-tour/:id"
             element={
               !data?.isUser && !data?.isAdmin ? (
@@ -80,40 +59,17 @@ function App() {
                 </PrivateRoute>
               )
             }
-          />
-          <Route
-            path="/"
-            element={
-              data?.isUser ? (
-                <ELEMENT.Home isHome={true} />
-              ) : data?.isAdmin ? (
-                <ELEMENT.HomeAdmin />
-              ) : (
-                <ELEMENT.Home isHome={true} />
-              )
-            }
-          />
-
-          {/* <Route
-            path="/trip"
-            element={
-              <PrivateRoute user={data?.isAdmin}>
-                <ELEMENT.IncomeTrip />
-              </PrivateRoute>
-            }
           /> */}
           {/* <Route
-            path="/payment"
+            path="/"
             element={
-              data?.isUser ? (
-                <PrivateRoute user={data?.isUser}>
-                  <ELEMENT.Payment wall={Wallpaper2} />
-                </PrivateRoute>
-              ) : data?.isAdmin ? (
-                <ELEMENT.HomeAdmin />
-              ) : (
-                <ELEMENT.Home isHome={true} />
-              )
+              // data?.isUser ? (
+              //   <ELEMENT.Home isHome={true} />
+              // ) : data?.isAdmin ? (
+              //   <ELEMENT.HomeAdmin />
+              // ) : (
+              <ELEMENT.Home isHome={true} />
+              // )
             }
           /> */}
         </Routes>

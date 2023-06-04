@@ -7,3 +7,4 @@ export { default as Home } from "../views/User/Home/Home";
 export { default as Card } from "./Card";
 export { default as Footer } from "./Footer";
 export { default as Table } from "./Table";
+export { default as GroupTour } from "./GroupTour";

@@ -1,0 +1,13 @@
+export const TOUR_FETCH = "TOUR_FETCH"
+export const TOUR_FETCH_SUCCESS = "TOUR_FETCH_SUCCESS"
+export const TOUR_FETCH_FAILED = "TOUR_FETCH_FAILED"
+
+export const GET_TOUR = "GET_TOUR"
+export const GET_TOUR_SUCCESS = "GET_TOUR_SUCCESS"
+export const GET_TOUR_FAILED = "GET_TOUR_FAILED"
+
+export const REMOVE_TOUR = "REMOVE_TOUR"
+
+export const TOUR_ADD = "TOUR_ADD"
+export const TOUR_ADD_SUCCESS = "TOUR_ADD_SUCCESS"
+export const TOUR_ADD_FAILED = "TOUR_ADD_FAILED"

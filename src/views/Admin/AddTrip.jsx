@@ -1,36 +1,60 @@
 import { Upload } from "@Assets/images";
 import { Button } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
+import { useDispatch,useSelector } from "react-redux";
+import { tourAddInitiate } from "@Utils/redux/actions/tourAction";
+import { getCountries } from "@Utils/redux/actions/countryAction";
 
-const getDataFromLS = () => {
-    const data = localStorage.getItem("dataTrip");
-    if(data){
-        return JSON.parse(data)
-    }else{
-        return []
-    }
-}
+// const getDataFromLS = () => {
+//     const data = localStorage.getItem("dataTrip");
+//     if(data){
+//         return JSON.parse(data)
+//     }else{
+//         return []
+//     }
+// }
 export default function AddTrip() {
   const style =
     "bg-[#d2d2d25b] py-2 border-blue-gray-800  border  rounded-md px-4 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500";
-
+  const {auth,country} = useSelector((state) => state)
   const [tempDataTrip, setTempDataTrip] = useState([]);
+  const [preview,setPreview] = useState(null)
+  const [dataCountry ,setDataCountry] = useState()
+  const d = useDispatch()
 
-  const [dataTrip,setDataTrip] = useState(getDataFromLS())
-  console.log(dataTrip);
-
-
-  function handleSubmit() {
-    setDataTrip([...dataTrip,tempDataTrip])
-
-    setTempDataTrip('')
+  // const [dataTrip,setDataTrip] = useState()
+  // console.log(dataTrip);
+  useEffect(() => {
+    d(getCountries())
+    setDataCountry(country?.country)
+  },[d])
+  // console.log(dataCountry,"ini country");
+  function handleSubmit(e) {
+    e.preventDefault()
+    const formData = new FormData();
+    formData.set('title', tempDataTrip.title);
+    formData.set('country_id', tempDataTrip.country_id);
+    formData.set('accomodation', tempDataTrip.accommodation);
+    formData.set('transport',tempDataTrip.transport);
+    formData.set('eat',tempDataTrip.eat);
+    formData.set('day',tempDataTrip.day);
+    formData.set('night',tempDataTrip.night);
+    formData.set('date_trip',tempDataTrip.date_trip);
+    formData.set('price',tempDataTrip.price);
+    formData.set('description',tempDataTrip.description);
+    formData.set('quota',tempDataTrip.quota);
+    
+   
+    formData.set('image', tempDataTrip.image[0], tempDataTrip.image[0].name);
+    d(tourAddInitiate(formData,auth.token))
+    console.log(formData);
   }
   
-  useEffect(() => {
-    localStorage.setItem("dataTrip",JSON.stringify(dataTrip))
-  },[dataTrip])
+  // useEffect(() => {
+  //   localStorage.setItem("dataTrip",JSON.stringify(dataTrip))
+  // },[dataTrip])
 
-  console.log(dataTrip);
+  // console.log(dataTrip);
   return (
     <>
       <form onSubmit={handleSubmit}>
@@ -50,7 +74,7 @@ export default function AddTrip() {
           <select
             className={style}
             onChange={(e) => {
-              setTempDataTrip((prev) => ({ ...prev, country: e.target.value }));
+              setTempDataTrip((prev) => ({ ...prev, country_id: e.target.value }));
             }}
             defaultValue="PLACEHOLDER"
             value={tempDataTrip?.country}
@@ -58,11 +82,11 @@ export default function AddTrip() {
             <option selected={true} disabled="disabled" value="PLACEHOLDER">
               Please Select Country
             </option>
-            <option value="Indonesia">Indonesia</option>
-            <option value="South Korea">South Korea</option>
-            <option value="Australia">Australia</option>
-            <option value="Japan">Japan</option>
-            <option value="Singapore">Singapore</option>
+            {dataCountry?.map((item,idx) => {
+              return (
+                <option key={idx} value={item.id_country}> {item.name_country}</option>
+              )
+            })}
           </select>
 
           <label className="px-2">Accommodation</label>
@@ -125,7 +149,7 @@ export default function AddTrip() {
             className={style}
             type="date"
             onChange={(e) => {
-              setTempDataTrip((prev) => ({ ...prev, dateTrip: e.target.value }));
+              setTempDataTrip((prev) => ({ ...prev, date_trip: e.target.value }));
             }}
             required
             value={tempDataTrip?.dateTrip}  
@@ -154,7 +178,7 @@ export default function AddTrip() {
           <textarea
             className={`${style} h-[100px] resize-none pr-12`}
             onChange={(e) => {
-              setTempDataTrip((prev) => ({ ...prev, desc: e.target.value }));
+              setTempDataTrip((prev) => ({ ...prev, description: e.target.value }));
             }}
             required
             value={tempDataTrip?.desc}
@@ -166,12 +190,16 @@ export default function AddTrip() {
               className={`${style} `}
               type="file"
               onChange={(e) => {
-                const fileObject = URL.createObjectURL(e.target.files[0])
-                setTempDataTrip((prev) => ({ ...prev, images: fileObject }));
+                let url = URL.createObjectURL(e.target.files[0]);
+                setPreview(url);
+                setTempDataTrip((prev) => ({ ...prev, image: e.target.files}));
               }}
               required
             />
             <img src={Upload} className="absolute top-1 -right-3 " />
+          </div>
+          <div>
+           {preview &&  <img src={preview} alt="photo" /> }
           </div>
           <div className="flex justify-center mt-10">
             <Button color="amber" className="text-white py-4 px-24" type="submit">

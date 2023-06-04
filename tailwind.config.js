@@ -6,7 +6,7 @@ module.exports = withMT({
   theme: {
     extend: {},
     fontFamily: {
-      avenir:['Sen','sans-serif']
+      avenir:['Sen','sans-serif'],
     },
 
   },

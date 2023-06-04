@@ -1,10 +1,11 @@
-import { Card, Modals } from "@Components/index";
+import { Card, Modals,GroupTour } from "@Components/index";
 import * as IMG from "@Assets/images";
 import * as IMGS from "@Assets/temp-image";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "react-query";
+import { API } from "../../../utils/api/api";
 
 export default function Home(props) {
-  const nav = useNavigate();
   const cardList = [
     {
       title: "Best Price Guaranteed",
@@ -27,56 +28,7 @@ export default function Home(props) {
       desc: "A small river named Duren flows by their place and supplies",
     },
   ];
-  const tourList = [
-    {
-      No:1,
-      title: "6D/4N Fun Tassie Vacation...",
-      img: IMGS.Tassie,
-      desc: "Australia",
-      price: 12938000,
-      pages: "12/15"
-    },
-    {
-      No:2,
-      title: "6D/4N Exciting Summer in...",
-      img: IMGS.Summer,
-      desc: "South Korea",
-      price: 10288000,
-      pages: "14/15"
-    },
-    {
-      No:3,
-      title: "8D/6N Wonderful Autumn...",
-      img: IMGS.Autumn,
-      desc: "Japan",
-      price: 28999000,
-      pages: "10/15"
-    },
-    {
-      No:4,
-      title: "4D/3N Overland Jakarta B...",
-      img: IMGS.Overland,
-      desc: "Indonesia",
-      price: 3188000,
-      pages: "8/10"
-    },
-    {
-      No:5,
-      title: "4D/3N Labuan Bajo Delight",
-      img: IMGS.Bajo,
-      desc: "Indonesia",
-      price: 10488000,
-      pages: "14/15"
-    },
-    {
-      No:6,
-      title: "5D/4N Magic Tokyo Fun",
-      img: IMGS.Tokyo,
-      desc: "Japan",
-      price: 11188000,
-      pages: "15/15"
-    },
-  ];
+
   return (
     <>
       <img
@@ -125,39 +77,7 @@ export default function Home(props) {
             );
           })}
         </div>
-        <div className="my-10">
-          <h1 className="text-center text-5xl font-bold">Group Tour</h1>
-          <div className="flex mt-10 justify-center flex-wrap">
-            {tourList?.map((data, index) => {
-              return (
-                <Card key={index} className="w-[350px] h-[350px] relative">
-                  <div className="flex justify-center mb-3">
-                    <img src={data?.img} alt="icon" />
-                  </div>
-                  <a href={`/detail-tour/${data.No}`}>
-                    <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 text-start ">
-                      {data?.title}
-                    </h5>
-                  </a>
-                  <p className="bg-white absolute top-7 right-5 p-2 rounded-l-lg">
-                    {data?.pages}
-                  </p>
-                  <div className="flex justify-between">
-                    <p className="mb-3 font-black text-[#FFAF00]  text-justify font-avenir">
-                      {data?.price.toLocaleString("id-ID", {
-                        style: "currency",
-                        currency: "IDR",
-                      })}
-                    </p>
-                    <p className="mb-3 font-normal text-gray-400  text-justify font-avenir">
-                      {data?.desc}
-                    </p>
-                  </div>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
+      <GroupTour />
       </div>
       <Modals />
     </>

@@ -7,31 +7,27 @@ import {
   CardFooter,
   Typography,
 } from "@material-tailwind/react";
-import { PalmLeft, Flower , } from "@Assets/images";
+import { PalmLeft, Flower} from "@Assets/images";
+
+import { useDispatch,useSelector } from "react-redux";
+import { loginInitiate } from "@Utils/redux/actions/authAction";
 
 export default function Modals({ handleOpen, open, handleOpenR }) {
   const [dataLogin, setDataLogin] = useState([]);
-  const handleSubmit = () => {
-    if(dataLogin.email === "skadskuds.f@gmail.com" && dataLogin.password === "admin"){
-        setDataLogin((prevData) => ({
-          ...prevData,
-          isAdmin: true,
-        }))
-        handleOpen() 
-    }else if(dataLogin.email === "user@gmail.com" && dataLogin.password === "user"){
-      setDataLogin((prevData) => ({
-        ...prevData,
-        isUser: true,
-      }));
-    }else{
-      alert("tidak ada akun")
-    }
+  const d = useDispatch()
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    d(loginInitiate(dataLogin))
+    handleOpen()
   }; 
-  useEffect(() => {
-    if (dataLogin.isAdmin || dataLogin.isUser) {
-      localStorage.setItem('dataLogin', JSON.stringify(dataLogin));
-    }
-  }, [dataLogin]);
+ 
+
+
+  // useEffect(() => {
+  //   if (dataLogin.isAdmin || dataLogin.isUser) {
+  //     localStorage.setItem('dataLogin', JSON.stringify(dataLogin));
+  //   }
+  // }, [dataLogin]);
   return (
     <Fragment>
       <Dialog

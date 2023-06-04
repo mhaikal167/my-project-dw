@@ -1,18 +1,17 @@
 import { PencilIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import {
   Card,
   Typography,
-  Button,
   CardBody,
   Chip,
-  CardFooter,
-  Avatar,
   IconButton,
   Tooltip,
 } from "@material-tailwind/react";
+import { AppContext } from "@Utils/context/AppContext";
 import { ModalTrans } from "@Components";
+import Swal from 'sweetalert2'
 
 const TABLE_HEAD = [
   "No",
@@ -23,73 +22,32 @@ const TABLE_HEAD = [
   "Action",
 ];
 
-const TABLE_ROWS = [
-  {
-    no: "1",
-    user: "Radif Ganteng",
-    trip: "6D/4N Fun Tassie Vacation...",
-    img: "bca.jpg",
-    status: "Pending",
-  },
-  {
-    no: "2",
-    user: "Haris Rahman",
-    trip: "6D/4N Fun Exciting Summer...",
-    img: "bni.jpg",
-    status: "Approve",
-  },
-  {
-    no: "3",
-    user: "Amin Subagiyo",
-    trip: "6D/4N Fun Tassie Vacation...",
-    img: "permata.jpg",
-    status: "cancel",
-  },
-  {
-    no: "4",
-    user: "Radif Ganteng",
-    trip: "6D/4N Fun Tassie Vacation...",
-    img: "bca.jpg",
-    status: "cancel",
-  },
-  {
-    no: "5",
-    user: "Radif Ganteng",
-    trip: "6D/4N Fun Tassie Vacation...",
-    img: "bca.jpg",
-    status: "Pending",
-  },
-  {
-    no: "6",
-    user: "Radif Ganteng",
-    trip: "6D/4N Fun Tassie Vacation...",
-    img: "bca.jpg",
-    status: "Approve",
-    status2: "Approve",
-    status3: "Approve",
-  },
-];
 
 export default function HomeAdmin() {
+  const [TABLE_ROWS , SET_TABLE_ROWS] = useState([]);
   const [open, setOpen] = useState(false);
+const [s,d] = useContext(AppContext)
+
   const [selected,setSelected] = useState()
   const handleOpen = (params) => {
     const selectedTrip = TABLE_ROWS.find((james) => james.no === params);
     setSelected(selectedTrip)
     setOpen(!open);
   };
-  console.log(selected);
+  console.log(s ,'iniiii state');
+  // console.log(dispatch() ,'iniiii dispatch');
 
   return (
     <div className="m-12">
       <div className=" flex flex-col justify-between gap-8 md:flex-row md:items-center">
         <div className="p-4 mt-10">
+          <button className="bg-blue-gray-600 text-white p-12" onClick={() => d.dispatch.authDispatch({type:"TEST DOANG"})} >Click me</button>
           <Typography variant="h5" color="blue-gray">
             Incoming Transactions
           </Typography>
         </div>
       </div>
-      <ModalTrans handleOpen={handleOpen} open={open} />
+      <ModalTrans handleOpen={handleOpen} open={open} data={selected} />
       <Card className="h-full w-full">
         <CardBody className="overflow-scroll px-0">
           <table className="w-full min-w-max table-auto text-left">
@@ -112,7 +70,7 @@ export default function HomeAdmin() {
               </tr>
             </thead>
             <tbody>
-              {TABLE_ROWS.map(({ no, user, trip, img, status }, index) => {
+              {TABLE_ROWS.map((item, index) => {
                 const isLast = index === TABLE_ROWS.length - 1;
                 const classes = isLast
                   ? "p-4"
@@ -127,7 +85,7 @@ export default function HomeAdmin() {
                           color="blue-gray"
                           className="font-bold"
                         >
-                          {no}
+                          {item.no}
                         </Typography>
                       </div>
                     </td>
@@ -137,7 +95,7 @@ export default function HomeAdmin() {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {user}
+                        {item.user}
                       </Typography>
                     </td>
                     <td className={classes}>
@@ -146,7 +104,7 @@ export default function HomeAdmin() {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {trip}
+                        {item.trip}
                       </Typography>
                     </td>
                     <td className={classes}>
@@ -156,7 +114,7 @@ export default function HomeAdmin() {
                           color="blue-gray"
                           className="font-normal capitalize"
                         >
-                          {img}
+                          {item.img}
                         </Typography>
                       </div>
                     </td>
@@ -165,11 +123,11 @@ export default function HomeAdmin() {
                         <Chip
                           size="sm"
                           variant="ghost"
-                          value={status}
+                          value={item?.status}
                           color={
-                            status === "Approve"
+                            item?.status === "Approve"
                               ? "green"
-                              : status === "Pending"
+                              : item?.status === "Pending"
                               ? "amber"
                               : "red"
                           }
@@ -181,7 +139,7 @@ export default function HomeAdmin() {
                         <IconButton
                           variant="text"
                           color="blue-gray"
-                          onClick={() => handleOpen(no)}
+                          onClick={() => handleOpen(item.no)}
                         >
                           <MagnifyingGlassIcon className="h-4 w-4" />
                         </IconButton>
@@ -193,37 +151,7 @@ export default function HomeAdmin() {
             </tbody>
           </table>
         </CardBody>
-        <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-          <Button variant="outlined" color="blue-gray" size="sm">
-            Previous
-          </Button>
-          <div className="flex items-center gap-2">
-            <IconButton variant="outlined" color="blue-gray" size="sm">
-              1
-            </IconButton>
-            <IconButton variant="text" color="blue-gray" size="sm">
-              2
-            </IconButton>
-            <IconButton variant="text" color="blue-gray" size="sm">
-              3
-            </IconButton>
-            <IconButton variant="text" color="blue-gray" size="sm">
-              ...
-            </IconButton>
-            <IconButton variant="text" color="blue-gray" size="sm">
-              8
-            </IconButton>
-            <IconButton variant="text" color="blue-gray" size="sm">
-              9
-            </IconButton>
-            <IconButton variant="text" color="blue-gray" size="sm">
-              10
-            </IconButton>
-          </div>
-          <Button variant="outlined" color="blue-gray" size="sm">
-            Next
-          </Button>
-        </CardFooter>
+       
       </Card>
     </div>
   );

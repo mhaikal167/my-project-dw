@@ -22,5 +22,6 @@ export {default as Name} from './name.png';
 export {default as Email} from './local_post_office.png';
 export {default as Phone} from './local_phone.png';
 export {default as Maps} from './place.png';
+export {default as QR} from './qr-code 1.png';
 
  

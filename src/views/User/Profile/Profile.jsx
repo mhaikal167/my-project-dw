@@ -1,4 +1,4 @@
-import { Icon2, Maps, Phone, Email, Name, Avatar2 } from "@Assets/images";
+import { Icon2, Maps, Phone, Email, Name, Avatar2 , QR } from "@Assets/images";
 import { Button, Card, Typography, Dialog } from "@material-tailwind/react";
 import { useState, useEffect } from "react";
 import { Bukti } from "@Assets/temp-image";
@@ -119,8 +119,8 @@ export default function Profile(props) {
               </div>
             </div>
             <div className="items-end mr-5 ml-20">
-              <img src={Bukti} alt="" />
-              <p>upload payment proof</p>
+              <img src={QR} alt="" />
+              <p>TCK0101</p>
             </div>
           </div>
 

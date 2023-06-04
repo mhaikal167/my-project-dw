@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Wallpaper2, Plus, Minus } from "@Assets/images";
+import { Plus, Minus } from "@Assets/images";
 import {
   Button,
   Carousel,
@@ -10,125 +10,106 @@ import {
 import * as SVG from "@Assets/svg";
 import { useNavigate, useParams } from "react-router-dom";
 import * as IMGS from "@Assets/temp-image";
+import { useDispatch, useSelector } from "react-redux";
+import { getTourInitiate, removeTour } from "@Utils/redux/actions/tourAction";
+import {
+  getPaymentPending,
+  paymentPendingRemove,
+} from "@Utils/redux/actions/transactionAction";
 export default function DetailTour() {
-  const login = JSON.parse(localStorage.getItem("dataLogin"));
   const { id } = useParams();
+  const d = useDispatch();
   const [qty, setQty] = useState(1);
   const [total, setTotal] = useState();
-  const [tour, setTour] = useState();
+  const [tourDetail, setTourDetail] = useState();
+  const [payment, setPayment] = useState(null);
   const [notif, setNotif] = useState(false);
+  const [notifP, setNotifP] = useState(false);
   const nav = useNavigate();
-  const tourList = [
-    {
-      No: "1",
-      title: "6D/4N Fun Tassie Vacation...",
-      img: IMGS.Tassie,
-      desc: "Australia",
-      price: 12938000,
-      pages: "12/15",
-      duration: "6 Day 4 Night",
-      hotel: "4",
-    },
-    {
-      No: "2",
-      title: "6D/4N Exciting Summer in...",
-      img: IMGS.Summer,
-      desc: "South Korea",
-      price: 10288000,
-      pages: "14/15",
-      duration: "6 Day 4 Night",
-      hotel: "4",
-    },
-    {
-      No: "3",
-      title: "8D/6N Wonderful Autumn...",
-      img: IMGS.Autumn,
-      desc: "Japan",
-      price: 28999000,
-      pages: "10/15",
-      duration: "8 Day 6 Night",
-      hotel: "6",
-    },
-    {
-      No: "4",
-      title: "4D/3N Overland Jakarta B...",
-      img: IMGS.Overland,
-      desc: "Indonesia",
-      price: 3188000,
-      pages: "8/10",
-      duration: "4 Day 3 Night",
-      hotel: "3",
-    },
-    {
-      No: "5",
-      title: "4D/3N Labuan Bajo Delight",
-      img: IMGS.Bajo,
-      desc: "Indonesia",
-      price: 10488000,
-      pages: "14/15",
-      duration: "4 Day 3 Night",
-      hotel: "3",
-    },
-    {
-      No: "6",
-      title: "5D/4N Magic Tokyo Fun",
-      img: IMGS.Tokyo,
-      desc: "Japan",
-      price: 11188000,
-      pages: "15/15",
-      duration: "5 Day 4 Night",
-      hotel: "4",
-    },
-  ];
+  const { tours, auth, transaction } = useSelector((state) => state);
+  var date = new Date();
+  var options = {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  };
+  var formattedDate = date.toLocaleDateString("en-US", options);
 
   const handleBook = () => {
-    localStorage.setItem("tourBook", JSON.stringify(tour));
-    console.log("terrendder kan");
-    if (login?.isUser) {
-      setTimeout(() => {
-        nav("/payment");
-      }, 1000);
+    if (auth.user) {
+      if (transaction.paymentPen) {
+        setNotifP(true);
+      } else {
+        setPayment({
+          counter_qty: qty,
+          total: total,
+          status: "Waiting Payment",
+          tour_id: tourDetail.id_tour,
+          book: formattedDate,
+        });
+      }
     } else {
       setNotif(true);
     }
   };
 
-  const selectedTour = tourList.find((james) => james.No === id);
+  const handleCancel = () => {
+    setPayment({
+      counter_qty: qty,
+      total: total,
+      status: "Waiting Payment",
+      tour_id: tourDetail.id_tour,
+      book: formattedDate,
+    });
+    d(paymentPendingRemove())
+    // setNotifP(!notifP)
+  };
+
+  const handleContinue = () => {
+    setTimeout(() => {
+      nav("/payment");
+    }, 1000);
+  };
 
   useEffect(() => {
-    setTotal(qty * selectedTour.price);
-  }, [selectedTour, qty]);
+    if (payment) {
+      d(getPaymentPending(payment));
+      setTimeout(() => {
+        nav("/payment");
+      }, 1000);
+    }
+  }, [payment, id, nav]);
 
   useEffect(() => {
-    setTour({ ...selectedTour, qty: qty, price: total, book: true });
-  }, [total, qty]);
+    if (tours) {
+      setTourDetail(tours.tour);
+    }
+  }, [tours]);
 
-  //   useEffect(() => {
-  //     const storedData = JSON.parse(localStorage.getItem('tourBook'));
-  //     if (storedData) {
-  //       localStorage.removeItem("tourBook")
-  //     }
-  //     console.log(storedData,'deleted');
-  //    },[])
+  useEffect(() => {
+    if (id && id !== "") {
+      d(getTourInitiate(id));
+    } else {
+      d(removeTour());
+    }
+  }, [id, d]);
 
-  //  useEffect(() => {
-  //   const storedData = JSON.parse(localStorage.getItem('tourBook'));
-  //   if (storedData) {
-  //     setTour(storedData);
-  //   }
-  //   console.log(storedData,'detail kan');
-  //  },[])
+  useEffect(() => {
+    setTotal(qty * tourDetail?.price);
+  }, [tourDetail, qty]);
+
   return (
     <>
       <div className="container m-auto px-20 font-avenir">
         {/* body section start */}
         <div className="mt-10 p-2">
-          <h1 className="text-5xl">{selectedTour.title}</h1>
-          <h1>{selectedTour.desc}</h1>
+          <h1 className="text-5xl">{tourDetail?.title}</h1>
+          <h1>{tourDetail?.country.name}</h1>
           <div className="grid grid-cols-3 gap-2">
             <Carousel className="rounded-xl h-[361px] w-full col-span-3">
               <img
-                src={selectedTour.img}
+                src={tourDetail?.image}
                 alt="image1"
                 className="h-full w-full object-cover"
               />
@@ -136,16 +117,16 @@ export default function DetailTour() {
                 src="https://images.unsplash.com/photo-1493246507139-91e8fad9978e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2940&q=80"
                 alt="image2"
                 className="h-full w-full object-cor"
-              />ve
+              />
               <img
                 src="https://images.unsplash.com/photo-1518623489648-a173ef7824f3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2762&q=80"
                 alt="image3"
                 className="h-full w-full object-cover"
               />
             </Carousel>
-              <img src={IMGS.Caro1} alt="" className="w-full"/>
-              <img src={IMGS.Caro2} alt="" className="w-full"/>
-              <img src={IMGS.Caro3} alt="" className="w-full" />
+            <img src={IMGS.Caro1} alt="" className="w-full" />
+            <img src={IMGS.Caro2} alt="" className="w-full" />
+            <img src={IMGS.Caro3} alt="" className="w-full" />
           </div>
           {/* information section start */}
           <div>
@@ -155,35 +136,37 @@ export default function DetailTour() {
                 <label className="text-gray-500 mb-2">Accomodation</label>
                 <div className="flex gap-2">
                   <img src={SVG.Hotel} className="w-[30px]" alt="icon" />
-                  <p>Hotel {selectedTour.hotel} Night</p>
+                  <p>{tourDetail?.accomodation}</p>
                 </div>
               </div>
               <div>
                 <label className="text-gray-500">Transportation</label>
                 <div className="flex gap-2">
                   <img src={SVG.Plane} className="w-[30px]" alt="icon" />
-                  <p>Qatar Always</p>
+                  <p>{tourDetail?.transport}</p>
                 </div>
               </div>
               <div>
                 <label className="text-gray-500">Eat</label>
                 <div className="flex gap-2">
                   <img src={SVG.Meal} className="w-[30px]" alt="icon" />
-                  <p>Included as Itinerary</p>
+                  <p>{tourDetail?.eat}</p>
                 </div>
               </div>
               <div>
                 <label className="text-gray-500">Duration</label>
                 <div className="flex gap-2">
                   <img src={SVG.Time} className="w-[30px]" alt="icon" />
-                  <p>{selectedTour.duration}</p>
+                  <p>
+                    {tourDetail?.day} Day {tourDetail?.night} Night
+                  </p>
                 </div>
               </div>
               <div>
                 <label className="text-gray-500">Date Trip</label>
                 <div className="flex gap-2 flex-row">
                   <img src={SVG.Calender} className="w-[30px]" alt="icon" />
-                  <p>26 August 2020</p>
+                  <p>{tourDetail?.date_trip}</p>
                 </div>
               </div>
             </div>
@@ -205,7 +188,7 @@ export default function DetailTour() {
             </Typography>
             <div className="px-4 pt-10 flex justify-between">
               <b className="text-[#FFAF00] text-2xl">
-                {selectedTour.price.toLocaleString("id-ID", {
+                {tourDetail?.price.toLocaleString("id-ID", {
                   style: "currency",
                   currency: "IDR",
                 })}{" "}
@@ -259,6 +242,7 @@ export default function DetailTour() {
             </div>
           </div>
           {/* body section end */}
+          {/* modal non login start */}
           <Dialog
             size="sm"
             open={notif}
@@ -273,6 +257,42 @@ export default function DetailTour() {
               </div>
             </Card>
           </Dialog>
+          {/* modal non login end */}
+
+          {/* modal already got payment */}
+          <Dialog
+            size="sm"
+            open={notifP}
+            handler={() => setNotifP(!notifP)}
+            className="bg-transparent shadow-none"
+          >
+            <Card className="mx-auto w-[500px] p-8">
+              <div className=" max-h-full m-auto ">
+                <p className="text-center text-2xl text-black ">
+                  You already book before ,wanna continue or cancel and replace
+                  it?
+                </p>
+                <div className="flex justify-center gap-4 mt-5">
+                  <Button
+                    color="red"
+                    className="text-white"
+                    onClick={handleCancel}
+                  >
+                    Cancel and Replace
+                  </Button>
+                  <Button
+                    color="green"
+                    className="text-white "
+                    onClick={handleContinue}
+                  >
+                    Continue
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          </Dialog>
+
+          {/* modal already got payment */}
         </div>
       </div>
     </>

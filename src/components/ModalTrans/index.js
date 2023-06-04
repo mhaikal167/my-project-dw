@@ -4,12 +4,15 @@ import {
   Dialog,
 Typography,
 Card,
+Chip,
 } from "@material-tailwind/react";
 import {Icon2} from '@Assets/images'
+import { Bukti } from "@Assets/temp-image";
  
-export default function ModalTrans({handleOpen,open}) {
+export default function ModalTrans({handleOpen,open ,data}) {
     const TABLE_HEAD = ["No", "Full Name", "Gender", "Phone", "", ""];
-
+    const totals = data?.qty * data?.price
+    console.log(totals,"initotal");
     const TABLE_ROWS = [
       {
         no: "1",
@@ -17,7 +20,7 @@ export default function ModalTrans({handleOpen,open}) {
         gender: "Male",
         phone: "083896833112",
         qty: "Qty",
-        total: "23"
+        total: data?.qty
       },
       {
         no: "",
@@ -25,14 +28,14 @@ export default function ModalTrans({handleOpen,open}) {
         gender: "",
         phone: "",
         qty: "Total",
-        // total: payment.price?.toLocaleString("en-US", {
-        //   style: "currency",
-        //   currency: "IDR",
-        // }),
-        total:"23"
+        total: totals.toLocaleString("en-US", {
+          style: "currency",
+          currency: "IDR",
+        }),
+       
       },
     ];
- 
+ console.log(data,"ini databanget");
   return (
     <Fragment>
       <Dialog open={open} handler={handleOpen} size="xl">
@@ -42,7 +45,7 @@ export default function ModalTrans({handleOpen,open}) {
             <div className="w-[220px] flex justify-center flex-col p-4">
               <p className="text-end text-2xl pr-2">Booking</p>
               <p className="text-center">
-                <b>Saturday,</b> 22 July 2020
+                <b>Saturday,</b> 22 July 2020 
               </p>
             </div>
           </div>
@@ -52,9 +55,20 @@ export default function ModalTrans({handleOpen,open}) {
                 
               </h1>
               <p className="text-gray-500"></p>
-              <p className="bg-[#ec7a7a48] text-[#ec7a7ad4] font-bold px-3 mt-10 font-avenir w-[160px] rounded ">
-                Waiting Approve
-              </p>
+              <div className="w-max">
+                        <Chip
+                          size="sm"
+                          variant="ghost"
+                          value={data?.status}
+                          color={
+                            data?.status === "Approve"
+                              ? "green"
+                              : data?.status === "Pending"
+                              ? "amber"
+                              : "red"
+                          }
+                        />
+                      </div>
             </div>
             <div className=" flex flex-col justify-start">
               <div>
@@ -64,7 +78,7 @@ export default function ModalTrans({handleOpen,open}) {
                 </div>
                 <div className=" p-4">
                   <b className="text-xl text-black">Accomodation</b>
-                  <p>Hotel Night</p>
+                  <p>Hotel {data?.hotel} Night</p>
                 </div>
               </div>
             </div>
@@ -72,7 +86,7 @@ export default function ModalTrans({handleOpen,open}) {
               <div>
                 <div className=" p-4">
                   <b className="text-xl text-black">Duration</b>
-                  <p></p>
+                  <p>{data?.duration}</p>
                 </div>
                 <div className=" p-4">
                   <b className="text-xl text-black">Transportation</b>
@@ -81,7 +95,7 @@ export default function ModalTrans({handleOpen,open}) {
               </div>
             </div>
             <div className="items-end mr-5 ml-20">
-              <img src="" alt="" />
+              <img src={Bukti} alt="" />
               <p>upload payment proof</p>
             </div>
           </div>
@@ -166,7 +180,7 @@ export default function ModalTrans({handleOpen,open}) {
                           variant="small"
                           className="font-bold text-xl "
                         >
-                          : {total}
+                          : {total} 
                         </Typography>
                       </td>
                     </tr>

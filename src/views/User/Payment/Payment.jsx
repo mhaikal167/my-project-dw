@@ -2,27 +2,62 @@ import { Icon2 } from "@Assets/images";
 import { Button, Card, Typography, Dialog } from "@material-tailwind/react";
 import { useState, useEffect } from "react";
 import { Bukti } from "@Assets/temp-image";
+import { useDispatch, useSelector } from "react-redux";
+import { DummyImg } from "@Assets/temp-image";
+import { paymentInitiate ,paymentPendingRemove } from "@Utils/redux/actions/transactionAction";
+
+
 export default function Payment(props) {
-  console.log(props);
-  const [payment, setPayment] = useState([]);
+  const [payment, setPayment] = useState();
   const [paySuccess, setPaySuccess] = useState(false);
-  useEffect(() => {
-    const storedData = JSON.parse(localStorage.getItem("tourBook"));
-    if (storedData) {
-      setPayment(storedData);
-    }
-    console.log(storedData, "detail kan");
-  }, []);
+  const [user, setUser] = useState();
+  const [status, setStatus] = useState("");
+  const [preview, setPreview] = useState(null);
+  const { auth, transaction,tours } = useSelector((state) => state);
+  const d = useDispatch()
+  const dataPayment = tours.tour
+
   const TABLE_HEAD = ["No", "Full Name", "Gender", "Phone", "", ""];
 
+  useEffect(() => {
+    if (auth?.user) {
+      setUser(auth.user);
+    } else {
+      setUser([]);
+    }
+  }, [auth?.user]);
+
+  useEffect(() => {
+    if (transaction?.paymentPen) {
+      setPayment(transaction.paymentPen);
+    } else {
+      setPayment([]);
+    }
+  }, [transaction?.paymentPen]);
+
+  console.log(payment);
+  const handleSubmitPayment = (e) => {
+    e.preventDefault()
+
+    const formData = new FormData();
+    formData.set('counter_qty',payment?.counter_qty);
+    formData.set('total',payment?.total);
+    formData.set('status',"Waiting Approve");
+    formData.set('tour_id',payment?.tour_id);
+    formData.set('image', payment?.image[0], payment?.image[0]?.name);
+
+    d(paymentInitiate(formData,auth.token))
+    d(paymentPendingRemove())
+    setPaySuccess(true)
+  }
   const TABLE_ROWS = [
     {
       no: "1",
-      fullName: "Radif Ganteng",
+      fullName: user?.fullName,
       gender: "Male",
-      phone: "083896833112",
+      phone: user?.phone,
       qty: "Qty",
-      total: payment.qty,
+      total: payment?.counter_qty,
     },
     {
       no: "",
@@ -30,49 +65,44 @@ export default function Payment(props) {
       gender: "",
       phone: "",
       qty: "Total",
-      total: payment.price?.toLocaleString("en-ID", {
+      total: payment?.total?.toLocaleString("en-ID", {
         style: "currency",
         currency: "IDR",
       }),
     },
   ];
+
   return (
     <>
-      <div className="w-screen p-12 m-auto">
-        <img
-          src={props.wall}
-          alt="gambar"
-          className="absolute top-0 w-full -z-10 left-0"
-        />
+    {transaction?.paymentPen  ? <div className="w-screen p-12 m-auto">
+        <form onSubmit={handleSubmitPayment}>
         <Card className="w-full p-12 border border-gray-200">
           <div className="flex justify-between">
             <img src={Icon2} alt="icon" className="w-48" />
             <div className="w-[220px] flex justify-center flex-col p-4">
               <p className="text-end text-2xl pr-2">Booking</p>
-              <p className="text-center">
-                <b>Saturday,</b> 22 July 2020
-              </p>
+              <p className="text-center">{payment?.book}</p>
             </div>
           </div>
           <div className="flex justify-between mb-20">
             <div className="mx-12 mt-5 items-center">
               <h1 className="font-extrabold text-2xl text-black">
-                {payment.title}
+                {payment?.title}
               </h1>
-              <p className="text-gray-500">{payment.desc}</p>
+              <p className="text-gray-500">{payment?.desc}</p>
               <p className="bg-[#ec7a7a48] text-[#ec7a7ad4] font-bold px-3 mt-10 font-avenir w-[160px] rounded ">
-                Waiting Approve
+                {payment?.status}
               </p>
             </div>
             <div className=" flex flex-col justify-start">
               <div>
                 <div className=" p-4">
                   <b className="text-xl text-black">Date Trip</b>
-                  <p>26 August 2020</p>
+                  <p>{dataPayment?.date_trip}</p>
                 </div>
                 <div className=" p-4">
                   <b className="text-xl text-black">Accomodation</b>
-                  <p>Hotel {payment.hotel} Night</p>
+                  <p>{dataPayment?.accomodation}</p>
                 </div>
               </div>
             </div>
@@ -80,17 +110,32 @@ export default function Payment(props) {
               <div>
                 <div className=" p-4">
                   <b className="text-xl text-black">Duration</b>
-                  <p>{payment.duration}</p>
+                  <p>{dataPayment?.day} Day {dataPayment?.night} Night</p>
                 </div>
                 <div className=" p-4">
                   <b className="text-xl text-black">Transportation</b>
-                  <p>Qatar Always</p>
+                  <p>{dataPayment?.transport}</p>
                 </div>
               </div>
             </div>
-            <div className="items-end mr-5 ml-20">
-              <img src={Bukti} alt="" />
-              <p>upload payment proof</p>
+            <div>
+              <div className="items-end mr-5 ml-20 relative bg-transparent z-10">
+                <img
+                  src={preview ? preview : DummyImg}
+                  alt=""
+                  className="absolute w-[200px] h-full -z-10 object-cover"
+                />
+                <input
+                  type="file"
+                  className="z-20 w-[200px] h-[200px] "
+                  onChange={(e) => {
+                    let url = URL.createObjectURL(e.target.files[0]);
+                    setPreview(url);
+                    setPayment((prev) => ({ ...prev, image: e.target.files}));
+                  }}
+                />
+              </div>
+              <p className="text-center">upload payment proof</p>
             </div>
           </div>
 
@@ -188,15 +233,33 @@ export default function Payment(props) {
           <Button
             color="amber"
             className="text-white w-[198px]"
-            onClick={() => {
-              setPaySuccess(!paySuccess);
-              localStorage.setItem("tourPending",JSON.stringify(payment))
-            }}
-          >
+            type="submit"
+            >
             Pay
           </Button>
         </div>
+        </form>
+      </div> :   
+      <>
+      <div className="h-screen">
+
       </div>
+      {/* <Dialog
+        size="lg"
+        open={true}
+        className="bg-transparent shadow-none"
+      >
+        <Card className="mx-auto w-full">
+          <div className=" max-h-full px-28">
+            <p className="text-center text-2xl text-black">Belum ada payment yang dibuat <a href="/" className="underline font-bold"> Buatlah dulu </a>
+               thank you
+            </p>
+          </div>
+        </Card>
+      </Dialog> */}
+      </>
+      }
+      
       <Dialog
         size="lg"
         open={paySuccess}
