@@ -1,11 +1,9 @@
-import { Card, Modals,GroupTour } from "@Components/index";
 import * as IMG from "@Assets/images";
-import * as IMGS from "@Assets/temp-image";
-import { useNavigate } from "react-router-dom";
-import { useQuery } from "react-query";
-import { API } from "../../../utils/api/api";
+import { Card, GroupTour, Modals } from "@Components/index";
+import { useState } from "react";
 
 export default function Home(props) {
+  const [search ,setSearch] = useState("")
   const cardList = [
     {
       title: "Best Price Guaranteed",
@@ -29,6 +27,7 @@ export default function Home(props) {
     },
   ];
 
+
   return (
     <>
       <img
@@ -51,7 +50,8 @@ export default function Home(props) {
           <div className="flex">
             <input
               type="text"
-              className="w-full rounded-l-lg border border-none"
+              className="w-full rounded-l-lg border border-none p-2"
+              onChange={(e) => setSearch(e.target.value)}
             />
             <button className="bg-[#FFAF00] text-white py-2 px-4 rounded-r-lg hover:bg-[#a77812] font-avenir">
               Search
@@ -77,7 +77,8 @@ export default function Home(props) {
             );
           })}
         </div>
-      <GroupTour />
+        {/* <Aleale/> */}
+      <GroupTour search={search}/>
       </div>
       <Modals />
     </>

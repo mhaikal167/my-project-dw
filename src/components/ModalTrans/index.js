@@ -1,41 +1,52 @@
-import { Fragment, useState } from "react";
-import {
-  Button,
-  Dialog,
-Typography,
-Card,
-Chip,
-} from "@material-tailwind/react";
-import {Icon2} from '@Assets/images'
+import { Icon2 } from "@Assets/images";
 import { Bukti } from "@Assets/temp-image";
- 
-export default function ModalTrans({handleOpen,open ,data}) {
-    const TABLE_HEAD = ["No", "Full Name", "Gender", "Phone", "", ""];
-    const totals = data?.qty * data?.price
-    console.log(totals,"initotal");
-    const TABLE_ROWS = [
-      {
-        no: "1",
-        fullName: "Radif Ganteng",
-        gender: "Male",
-        phone: "083896833112",
-        qty: "Qty",
-        total: data?.qty
-      },
-      {
-        no: "",
-        fullName: "",
-        gender: "",
-        phone: "",
-        qty: "Total",
-        total: totals.toLocaleString("en-US", {
-          style: "currency",
-          currency: "IDR",
-        }),
-       
-      },
-    ];
- console.log(data,"ini databanget");
+import {
+  Card,
+  Chip,
+  Dialog,
+  Typography
+} from "@material-tailwind/react";
+import { Fragment } from "react";
+import { useDispatch } from "react-redux";
+export default function ModalTrans({ handleOpen, open, data }) {
+
+  const d = useDispatch()
+
+  const dateConvert = (params) => {
+    var date = new Date(params);
+    var options = {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    };
+    var formattedDate = date.toLocaleDateString("en-US", options);
+    return formattedDate
+  }
+  // const dateObject = new Date(data?.tour.date_trip);
+  const TABLE_HEAD = ["No", "Full Name", "Gender", "Phone", "", ""];
+  const TABLE_ROWS = [
+    {
+      no: "1",
+      fullName: data?.user.fullName,
+      gender: "Male",
+      phone: data?.user.phone,
+      qty: "Qty",
+      total: data?.counter_qty,
+    },
+    {
+      no: "",
+      fullName: "",
+      gender: "",
+      phone: "",
+      qty: "Total",
+      total: data?.total?.toLocaleString("en-US", {
+        style: "currency",
+        currency: "IDR",
+      }),
+    },
+  ];
+
   return (
     <Fragment>
       <Dialog open={open} handler={handleOpen} size="xl">
@@ -45,40 +56,38 @@ export default function ModalTrans({handleOpen,open ,data}) {
             <div className="w-[220px] flex justify-center flex-col p-4">
               <p className="text-end text-2xl pr-2">Booking</p>
               <p className="text-center">
-                <b>Saturday,</b> 22 July 2020 
+                {dateConvert(data?.created_at)}
               </p>
             </div>
           </div>
           <div className="flex justify-between mb-20">
             <div className="mx-12 mt-5 items-center">
-              <h1 className="font-extrabold text-2xl text-black">
-                
-              </h1>
+              <h1 className="font-extrabold text-2xl text-black"></h1>
               <p className="text-gray-500"></p>
               <div className="w-max">
-                        <Chip
-                          size="sm"
-                          variant="ghost"
-                          value={data?.status}
-                          color={
-                            data?.status === "Approve"
-                              ? "green"
-                              : data?.status === "Pending"
-                              ? "amber"
-                              : "red"
-                          }
-                        />
-                      </div>
+                <Chip
+                  size="sm"
+                  variant="ghost"
+                  value={data?.status}
+                  color={
+                    data?.status === "success"
+                      ? "green"
+                      : data?.status === "pending"
+                      ? "amber"
+                      : "red"
+                  }
+                />
+              </div>
             </div>
             <div className=" flex flex-col justify-start">
               <div>
                 <div className=" p-4">
                   <b className="text-xl text-black">Date Trip</b>
-                  <p>26 August 2020</p>
+                  <p>{dateConvert(data?.tour.date_trip)}</p>
                 </div>
                 <div className=" p-4">
                   <b className="text-xl text-black">Accomodation</b>
-                  <p>Hotel {data?.hotel} Night</p>
+                  <p>{data?.tour.accomodation}</p>
                 </div>
               </div>
             </div>
@@ -86,11 +95,11 @@ export default function ModalTrans({handleOpen,open ,data}) {
               <div>
                 <div className=" p-4">
                   <b className="text-xl text-black">Duration</b>
-                  <p>{data?.duration}</p>
+                  <p>{data?.tour.day} Day {data?.tour.night} Night</p>
                 </div>
                 <div className=" p-4">
                   <b className="text-xl text-black">Transportation</b>
-                  <p>Qatar Always</p>
+                  <p>{data?.tour.transport}</p>
                 </div>
               </div>
             </div>
@@ -180,7 +189,7 @@ export default function ModalTrans({handleOpen,open ,data}) {
                           variant="small"
                           className="font-bold text-xl "
                         >
-                          : {total} 
+                          : {total}
                         </Typography>
                       </td>
                     </tr>
@@ -189,22 +198,7 @@ export default function ModalTrans({handleOpen,open ,data}) {
               )}
             </tbody>
           </table>
-          <div className="flex justify-end mr-4 my-5 bg-transparent shadow-none gap-4">
-          <Button
-            color="red"
-            className="text-white w-[128px] "
-          >
-            Cancel
-          </Button>
-          <Button
-            color="green"
-            className="text-white w-[128px]"
-          >
-            Approve
-          </Button>
-        </div>
         </Card>
-        
       </Dialog>
     </Fragment>
   );

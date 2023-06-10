@@ -8,6 +8,7 @@ import { AppProvider } from "@Utils/context/AppContext";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { store ,persistor} from "./utils/redux/store";
+import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 
 const client = new QueryClient();
@@ -19,7 +20,9 @@ root.render(
         <ThemeProvider>
           <Provider store={store}>
             <PersistGate persistor={persistor}>
+            <BrowserRouter>
             <App />
+            </BrowserRouter>
             </PersistGate>
           </Provider>
         </ThemeProvider>

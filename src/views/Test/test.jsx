@@ -1,32 +1,21 @@
-import React, { useState, useEffect } from 'react';
-
-const MyComponent = () => {
-  const [myData, setMyData] = useState('');
-
-  // Mengambil data dari local storage saat komponen dimuat
-  useEffect(() => {
-    const storedData = localStorage.getItem('myData');
-    if (storedData) {
-      setMyData(storedData);
-    }
-  }, []);
-
-  // Menyimpan data ke local storage saat nilai berubah
-  useEffect(() => {
-    localStorage.setItem('myData', myData);
-  }, [myData]);
-
-  const handleChange = (event) => {
-    setMyData(event.target.value);
-  };
-  console.log(myData);
-
+import {
+  Card,
+  Dialog,
+} from "@material-tailwind/react";
+import { Fragment } from "react";
+export default function NotFound() {
   return (
-    <div>
-      <input type="text" onChange={handleChange} />
-      <p>Nilai: {myData}</p>
-    </div>
-  );
-};
+    <Fragment>
+      <Dialog open={true} size="xl">
+        <Card className="w-full p-12 border border-gray-200 shadow-none">
+          NOT FOUND
+        </Card>
+      </Dialog>
+      <div>
+        <div className="w-full h-screen border border-black">
 
-export default MyComponent;
+        </div>
+      </div>
+    </Fragment>
+  );
+}

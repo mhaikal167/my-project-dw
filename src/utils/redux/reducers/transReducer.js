@@ -3,6 +3,7 @@ const INITIAL_STATE_TRANSACTION = {
   loading: false,
   paymentPen: null,
   payment:[],
+  responseUpdate:null,
   error: null,
 };
 
@@ -38,7 +39,40 @@ export const transReducer = (state = INITIAL_STATE_TRANSACTION, action) => {
           loading: false,
           error: payload
         };
-    
+        case payTypes.GET_TRANSACTION:
+            return {
+              ...state,
+              loading: true,
+            };
+        case payTypes.GET_TRANSACTION_SUCCESS:
+            return {
+              ...state,
+              loading: false,
+              payment : payload
+            };
+        case payTypes.GET_TRANSACTION_FAILED:
+            return {
+              ...state,
+              loading: false,
+              error: payload
+            };
+            case payTypes.UPDATE_TRANSACTION:
+                return {
+                  ...state,
+                  loading: true,
+                };
+            case payTypes.UPDATE_TRANSACTION_SUCCESS:
+                return {
+                  ...state,
+                  loading: false,
+                  responseUpdate : payload
+                };
+            case payTypes.UPDATE_TRANSACTION_FAILED:
+                return {
+                  ...state,
+                  loading: false,
+                  error: payload
+                };
     default:
       return state;
   }

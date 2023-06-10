@@ -1,9 +1,9 @@
 import { Card, Modals } from "@Components/index";
-import { useNavigate} from "react-router-dom";
+import { getTours } from "@Utils/redux/actions/tourAction";
 import { Button } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import { useSelector,useDispatch } from "react-redux";
-import { getTours } from "@Utils/redux/actions/tourAction";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 export default function IncomeTrip(props) {
   const nav = useNavigate();
@@ -51,7 +51,7 @@ export default function IncomeTrip(props) {
                 </h5>
              
               <p className="bg-white absolute top-7 right-5 p-2 rounded-l-lg">
-                0 / {data?.quota}
+                {data?.quota_current} / {data?.quota}
               </p>
               <div className="flex justify-between">
                 <p className="mb-3 font-black text-[#FFAF00]  text-justify font-avenir">

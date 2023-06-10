@@ -23,5 +23,5 @@ export {default as Email} from './local_post_office.png';
 export {default as Phone} from './local_phone.png';
 export {default as Maps} from './place.png';
 export {default as QR} from './qr-code 1.png';
-
+export {default as DefaultProfile} from './blank-profile-picture-g974c0e96d_1280.png'
  

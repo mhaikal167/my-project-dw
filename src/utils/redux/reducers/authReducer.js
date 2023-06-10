@@ -70,6 +70,23 @@ export const authReducer = (state = INITIAL_STATE_AUTH, action) => {
           loading: false,
           isError: payload,
         };
+        case authTypes.UPDATE_USER:
+          return {
+            ...state,
+            loading: true,
+          };
+        case authTypes.UPDATE_USER_SUCCESS:
+          return {
+            ...state,
+            loading: false,
+           isError:null
+          };
+        case authTypes.UPDATE_USER_FAILED:
+          return {
+            ...state,
+            loading: false,
+            isError: payload,
+          };
     default:
       return state;
   }

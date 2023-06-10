@@ -1,9 +1,10 @@
 import { Upload } from "@Assets/images";
+import { ModalCountry } from "@Components/";
+import { getCountries } from "@Utils/redux/actions/countryAction";
+import { tourAddInitiate } from "@Utils/redux/actions/tourAction";
 import { Button } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import { useDispatch,useSelector } from "react-redux";
-import { tourAddInitiate } from "@Utils/redux/actions/tourAction";
-import { getCountries } from "@Utils/redux/actions/countryAction";
+import { useDispatch, useSelector } from "react-redux";
 
 // const getDataFromLS = () => {
 //     const data = localStorage.getItem("dataTrip");
@@ -16,40 +17,45 @@ import { getCountries } from "@Utils/redux/actions/countryAction";
 export default function AddTrip() {
   const style =
     "bg-[#d2d2d25b] py-2 border-blue-gray-800  border  rounded-md px-4 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500";
-  const {auth,country} = useSelector((state) => state)
+  const { auth, country } = useSelector((state) => state);
   const [tempDataTrip, setTempDataTrip] = useState([]);
-  const [preview,setPreview] = useState(null)
-  const [dataCountry ,setDataCountry] = useState()
-  const d = useDispatch()
+  const [preview, setPreview] = useState(null);
+  const [dataCountry, setDataCountry] = useState([{
+    id_country:1,
+    name_country:"loading......"
+  }]);
+  const [openCountry, setOpenCountry] = useState(false);
+  const d = useDispatch();
 
-  // const [dataTrip,setDataTrip] = useState()
-  // console.log(dataTrip);
   useEffect(() => {
-    d(getCountries())
-    setDataCountry(country?.country)
-  },[d])
-  // console.log(dataCountry,"ini country");
+    d(getCountries());
+  }, []);
+
+  useEffect(() => {
+      setDataCountry(country.country);
+  }, []);
+
   function handleSubmit(e) {
-    e.preventDefault()
+    e.preventDefault();
     const formData = new FormData();
-    formData.set('title', tempDataTrip.title);
-    formData.set('country_id', tempDataTrip.country_id);
-    formData.set('accomodation', tempDataTrip.accommodation);
-    formData.set('transport',tempDataTrip.transport);
-    formData.set('eat',tempDataTrip.eat);
-    formData.set('day',tempDataTrip.day);
-    formData.set('night',tempDataTrip.night);
-    formData.set('date_trip',tempDataTrip.date_trip);
-    formData.set('price',tempDataTrip.price);
-    formData.set('description',tempDataTrip.description);
-    formData.set('quota',tempDataTrip.quota);
-    
-   
-    formData.set('image', tempDataTrip.image[0], tempDataTrip.image[0].name);
-    d(tourAddInitiate(formData,auth.token))
-    console.log(formData);
+    formData.set("title", tempDataTrip.title);
+    formData.set("country_id", tempDataTrip.country_id);
+    formData.set("accomodation", tempDataTrip.accommodation);
+    formData.set("transport", tempDataTrip.transport);
+    formData.set("eat", tempDataTrip.eat);
+    formData.set("day", tempDataTrip.day);
+    formData.set("night", tempDataTrip.night);
+    formData.set("date_trip", tempDataTrip.date_trip);
+    formData.set("price", tempDataTrip.price);
+    formData.set("description", tempDataTrip.description);
+    formData.set("quota", tempDataTrip.quota);
+    formData.set("quota_current", tempDataTrip.quota_current);
+
+    formData.set("image", tempDataTrip.image[0], tempDataTrip.image[0].name);
+    d(tourAddInitiate(formData, auth.token));
   }
-  
+  console.log(tempDataTrip, "ini temo");
+
   // useEffect(() => {
   //   localStorage.setItem("dataTrip",JSON.stringify(dataTrip))
   // },[dataTrip])
@@ -57,6 +63,7 @@ export default function AddTrip() {
   // console.log(dataTrip);
   return (
     <>
+      <ModalCountry handleCountry={setOpenCountry} openCountry={openCountry} />
       <form onSubmit={handleSubmit}>
         <div className="w-full flex flex-col p-20 font-avenir gap-4">
           <h1 className="text-2xl font-bold p-2">Add Trip</h1>
@@ -69,25 +76,34 @@ export default function AddTrip() {
             required
             value={tempDataTrip?.title}
           />
-
           <label className="px-2">Country</label>
-          <select
-            className={style}
-            onChange={(e) => {
-              setTempDataTrip((prev) => ({ ...prev, country_id: e.target.value }));
-            }}
-            defaultValue="PLACEHOLDER"
-            value={tempDataTrip?.country}
-          >
-            <option selected={true} disabled="disabled" value="PLACEHOLDER">
-              Please Select Country
-            </option>
-            {dataCountry?.map((item,idx) => {
-              return (
-                <option key={idx} value={item.id_country}> {item.name_country}</option>
-              )
-            })}
-          </select>
+          <div className="w-full grid grid-cols-6 gap-4">
+            <select
+              className={`${style} col-span-5`}
+              onChange={(e) => {
+                setTempDataTrip((prev) => ({
+                  ...prev,
+                  country_id: e.target.value,
+                }));
+              }}
+              defaultValue="PLACEHOLDER"
+              value={tempDataTrip?.country}
+            >
+              <option selected={true} disabled="disabled" value="PLACEHOLDER">
+                Please Select Country
+              </option>
+              {country.loading ? <option>loading....</option> : dataCountry?.map((item, idx) => {
+                return (
+                  <option key={idx} value={item.id_country}>
+                    {item.name_country.toUpperCase()}
+                  </option>
+                );
+              })}
+            </select>
+            <Button onClick={() => setOpenCountry((prev) => !prev)}>
+              Add Country
+            </Button>
+          </div>
 
           <label className="px-2">Accommodation</label>
           <input
@@ -106,7 +122,10 @@ export default function AddTrip() {
           <input
             className={style}
             onChange={(e) => {
-              setTempDataTrip((prev) => ({ ...prev, transport: e.target.value }));
+              setTempDataTrip((prev) => ({
+                ...prev,
+                transport: e.target.value,
+              }));
             }}
             required
             value={tempDataTrip?.transport}
@@ -149,10 +168,13 @@ export default function AddTrip() {
             className={style}
             type="date"
             onChange={(e) => {
-              setTempDataTrip((prev) => ({ ...prev, date_trip: e.target.value }));
+              setTempDataTrip((prev) => ({
+                ...prev,
+                date_trip: e.target.value,
+              }));
             }}
             required
-            value={tempDataTrip?.dateTrip}  
+            value={tempDataTrip?.dateTrip}
           />
 
           <label className="px-2">Price</label>
@@ -169,7 +191,11 @@ export default function AddTrip() {
           <input
             className={style}
             onChange={(e) => {
-              setTempDataTrip((prev) => ({ ...prev, quota: e.target.value }));
+              setTempDataTrip((prev) => ({
+                ...prev,
+                quota: e.target.value,
+                quota_current: 0,
+              }));
             }}
             required
             value={tempDataTrip?.quota}
@@ -178,7 +204,10 @@ export default function AddTrip() {
           <textarea
             className={`${style} h-[100px] resize-none pr-12`}
             onChange={(e) => {
-              setTempDataTrip((prev) => ({ ...prev, description: e.target.value }));
+              setTempDataTrip((prev) => ({
+                ...prev,
+                description: e.target.value,
+              }));
             }}
             required
             value={tempDataTrip?.desc}
@@ -192,17 +221,19 @@ export default function AddTrip() {
               onChange={(e) => {
                 let url = URL.createObjectURL(e.target.files[0]);
                 setPreview(url);
-                setTempDataTrip((prev) => ({ ...prev, image: e.target.files}));
+                setTempDataTrip((prev) => ({ ...prev, image: e.target.files }));
               }}
               required
             />
             <img src={Upload} className="absolute top-1 -right-3 " />
           </div>
-          <div>
-           {preview &&  <img src={preview} alt="photo" /> }
-          </div>
+          <div>{preview && <img src={preview} alt="photo" className="w-[350px] h-[350px] object-cover" />}</div>
           <div className="flex justify-center mt-10">
-            <Button color="amber" className="text-white py-4 px-24" type="submit">
+            <Button
+              color="amber"
+              className="text-white py-4 px-24"
+              type="submit"
+            >
               Add Trip
             </Button>
           </div>

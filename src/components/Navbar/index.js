@@ -1,17 +1,17 @@
-import { useState, useEffect } from "react";
+import { Avatar, Bill, DefaultProfile, Logout, Profile, Trip } from "@Assets/images";
 import Logo from "@Assets/images/Icon.png";
-import { Avatar, Bill, Profile, Logout, Trip } from "@Assets/images";
+import { Modal, Modals } from "@Components";
+import { logoutInitiate } from "@Utils/redux/actions/authAction";
 import {
   Button,
   Menu,
   MenuHandler,
-  MenuList,
   MenuItem,
+  MenuList,
 } from "@material-tailwind/react";
-import { Modal, Modals } from "@Components";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutInitiate } from "@Utils/redux/actions/authAction";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar({ wall }) {
   const nav = useNavigate();
@@ -55,8 +55,8 @@ export default function Navbar({ wall }) {
               <ul className=" px-24 pt-2">
                 <Menu className="mr-20">
                   <MenuHandler>
-                    <button>
-                      <img src={Avatar} alt="avatar" />
+                    <button className="border-2 border-yellow-400 rounded-full">
+                      <img src={user?.picture ? user?.picture : DefaultProfile} alt="avatar" className="rounded-full w-[50px] h-[50px] object-cover"/>
                     </button>
                   </MenuHandler>
                   <MenuList>
@@ -69,7 +69,7 @@ export default function Navbar({ wall }) {
                     </MenuItem>
                     <MenuItem
                       className="flex items-center justify-between pr-16"
-                      onClick={() => nav("/payment-pending")}
+                      onClick={() => nav("/payment")}
                     >
                       <img src={Bill} alt="logout" />
                       Pay

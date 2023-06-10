@@ -1,15 +1,15 @@
-import { Fragment, useState } from "react";
+import { Flower, PalmLeft } from "@Assets/images";
+import { registerInitiate } from "@Utils/redux/actions/authAction";
 import {
   Button,
-  Dialog,
   Card,
   CardBody,
   CardFooter,
+  Dialog,
   Typography,
 } from "@material-tailwind/react";
-import { PalmLeft, Flower } from "@Assets/images";
+import { Fragment, useState } from "react";
 import { useDispatch } from "react-redux";
-import { registerInitiate } from "@Utils/redux/actions/authAction";
 
 export default function Modal({ handleOpen, open, handleOpenR }) {
   const [dataRegister, setDataRegister] = useState([]);
@@ -19,6 +19,7 @@ export default function Modal({ handleOpen, open, handleOpenR }) {
     d(registerInitiate(dataRegister))
     handleOpen()
   }; 
+  console.log(dataRegister);
   return (
     <Fragment>
       <Dialog
@@ -75,6 +76,16 @@ export default function Modal({ handleOpen, open, handleOpenR }) {
                   setDataRegister({ ...dataRegister, phone: e.target.value })
                 }
               />
+              <label className="px-2">Gender</label>
+              <select onChange={(e) =>
+                  setDataRegister({ ...dataRegister, gender: e.target.value })
+                }
+                className="bg-[#d2d2d25b] py-2 border-blue-gray-800  border  rounded-md px-4 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+                >
+                <option selected disabled value="PLACEHOLDER"> Please Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
               <label className="px-2">Address</label>
               <textarea
                 className="bg-[#d2d2d25b] py-2 rounded-md px-4 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 resize-none h-[100px]"

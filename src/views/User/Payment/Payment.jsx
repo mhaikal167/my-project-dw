@@ -1,15 +1,15 @@
 import { Icon2 } from "@Assets/images";
-import { Button, Card, Typography, Dialog } from "@material-tailwind/react";
-import { useState, useEffect } from "react";
-import { Bukti } from "@Assets/temp-image";
-import { useDispatch, useSelector } from "react-redux";
 import { DummyImg } from "@Assets/temp-image";
-import { paymentInitiate ,paymentPendingRemove } from "@Utils/redux/actions/transactionAction";
+import { paymentInitiate, paymentPendingRemove } from "@Utils/redux/actions/transactionAction";
+import { Button, Card, Dialog, Typography } from "@material-tailwind/react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 
 export default function Payment(props) {
   const [payment, setPayment] = useState();
   const [paySuccess, setPaySuccess] = useState(false);
+  const [openDialog,setOpenDialog] = useState(false)
   const [user, setUser] = useState();
   const [status, setStatus] = useState("");
   const [preview, setPreview] = useState(null);
@@ -32,6 +32,7 @@ export default function Payment(props) {
       setPayment(transaction.paymentPen);
     } else {
       setPayment([]);
+      setOpenDialog((prev) => !prev)
     }
   }, [transaction?.paymentPen]);
 
@@ -44,7 +45,6 @@ export default function Payment(props) {
     formData.set('total',payment?.total);
     formData.set('status',"Waiting Approve");
     formData.set('tour_id',payment?.tour_id);
-    formData.set('image', payment?.image[0], payment?.image[0]?.name);
 
     d(paymentInitiate(formData,auth.token))
     d(paymentPendingRemove())
@@ -54,7 +54,7 @@ export default function Payment(props) {
     {
       no: "1",
       fullName: user?.fullName,
-      gender: "Male",
+      gender: user?.gender,
       phone: user?.phone,
       qty: "Qty",
       total: payment?.counter_qty,
@@ -74,7 +74,7 @@ export default function Payment(props) {
 
   return (
     <>
-    {transaction?.paymentPen  ? <div className="w-screen p-12 m-auto">
+    <div className="w-screen p-12 m-auto">
         <form onSubmit={handleSubmitPayment}>
         <Card className="w-full p-12 border border-gray-200">
           <div className="flex justify-between">
@@ -121,18 +121,9 @@ export default function Payment(props) {
             <div>
               <div className="items-end mr-5 ml-20 relative bg-transparent z-10">
                 <img
-                  src={preview ? preview : DummyImg}
+                  src={DummyImg}
                   alt=""
                   className="absolute w-[200px] h-full -z-10 object-cover"
-                />
-                <input
-                  type="file"
-                  className="z-20 w-[200px] h-[200px] "
-                  onChange={(e) => {
-                    let url = URL.createObjectURL(e.target.files[0]);
-                    setPreview(url);
-                    setPayment((prev) => ({ ...prev, image: e.target.files}));
-                  }}
                 />
               </div>
               <p className="text-center">upload payment proof</p>
@@ -239,14 +230,14 @@ export default function Payment(props) {
           </Button>
         </div>
         </form>
-      </div> :   
+      </div>
       <>
-      <div className="h-screen">
+      {/* <div className="h-screen">
 
       </div>
-      {/* <Dialog
+      <Dialog
         size="lg"
-        open={true}
+        open={openDialog}
         className="bg-transparent shadow-none"
       >
         <Card className="mx-auto w-full">
@@ -258,7 +249,6 @@ export default function Payment(props) {
         </Card>
       </Dialog> */}
       </>
-      }
       
       <Dialog
         size="lg"

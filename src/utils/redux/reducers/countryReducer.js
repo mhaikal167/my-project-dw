@@ -27,6 +27,24 @@ export const countryReducer = (state = INITIAL_STATE_COUNTRY, action) => {
         loading: false,
         error: payload,
       };
+      // 
+      case countryTypes.ADD_COUNTRY:
+        return {
+          ...state,
+          loading: true,
+        };
+      case countryTypes.ADD_COUNTRY_SUCCESS:
+        return {
+          ...state,
+          loading: false,
+          country: payload,
+        };
+      case countryTypes.ADD_COUNTRY_FAILED:
+        return {
+          ...state,
+          loading: false,
+          error: payload,
+        };
     default:
       return state;
   }

@@ -70,7 +70,24 @@ export const tourReducer = (state = INITIAL_STATE_TOUR, action) => {
         loading: false,
         error: payload,
       };
-
+// update TOUR
+case tourTypes.UPDATE_TOUR:
+  return {
+    ...state,
+    loading: true,
+  };
+case tourTypes.UPDATE_TOUR_SUCCESS:
+  return {
+    ...state,
+    loading: false,
+    tour: payload,
+  };
+case tourTypes.UPDATE_TOUR_FAILED:
+  return {
+    ...state,
+    loading: false,
+    error: payload,
+  };
     default:
       return state;
   }

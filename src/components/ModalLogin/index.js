@@ -1,16 +1,16 @@
-import { Fragment, useEffect, useState } from "react";
+import { Flower, PalmLeft } from "@Assets/images";
 import {
   Button,
-  Dialog,
   Card,
   CardBody,
   CardFooter,
+  Dialog,
   Typography,
 } from "@material-tailwind/react";
-import { PalmLeft, Flower} from "@Assets/images";
+import { Fragment, useState } from "react";
 
-import { useDispatch,useSelector } from "react-redux";
 import { loginInitiate } from "@Utils/redux/actions/authAction";
+import { useDispatch } from "react-redux";
 
 export default function Modals({ handleOpen, open, handleOpenR }) {
   const [dataLogin, setDataLogin] = useState([]);

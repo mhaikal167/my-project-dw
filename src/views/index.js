@@ -7,3 +7,4 @@ export {default as PaymentPen} from './User/PaymentPending/PaymentPen';
 export {default as HomeAdmin} from './Admin/HomeAdmin';
 export {default as IncomeTrip} from './Admin/IncomeTrip';
 export {default as AddTrip} from './Admin/AddTrip';
+export {default as NotFound} from './Test/test'
